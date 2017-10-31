@@ -1,0 +1,5 @@
+.Python
+[Ll]ib/
+[Ii]nclude/
+bin/
+pip-selfcheck.json
