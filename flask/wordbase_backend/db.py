@@ -1,6 +1,6 @@
 import sqlite3
 from flask import g
-from wordbase_backend import app
+from .wordbase_backend import app
 
 def get():
     """Opens a new db connection if none exists in the app context."""

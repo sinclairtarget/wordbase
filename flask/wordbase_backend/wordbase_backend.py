@@ -4,9 +4,9 @@ import sqlite3
 
 app = Flask(__name__)
 
-import db
-from errors import ApplicationException, EntryNotFound, DuplicateEntry
-from entry import Entry
+from . import db
+from .errors import ApplicationException, EntryNotFound, DuplicateEntry
+from .entry import Entry
 
 @app.errorhandler(ApplicationException)
 def handle_not_found(error):
