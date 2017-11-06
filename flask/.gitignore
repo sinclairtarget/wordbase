@@ -5,3 +5,4 @@ bin/
 pip-selfcheck.json
 __pycache__
 *.db
+*.egg-info
