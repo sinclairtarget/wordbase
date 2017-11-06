@@ -8,18 +8,11 @@ def get():
         g.sqlite_db = connect()
     return g.sqlite_db
 
-def dict_factory(cursor, row):
-    """Converts query result rows to dicts."""
-    d = {}
-    for idx, col in enumerate(cursor.description):
-        d[col[0]] = row[idx]
-    return d
-
 def connect():
     """Connects to the specific database."""
-    rv = sqlite3.connect(app.config['DATABASE'])
-    rv.row_factory = dict_factory
-    return rv
+    conn = sqlite3.connect(app.config['DATABASE'])
+    conn.row_factory = sqlite3.Row
+    return conn
 
 @app.cli.command('initdb')
 def init_command():
