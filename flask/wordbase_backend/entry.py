@@ -6,7 +6,13 @@ def make_slug(word):
     return parse.quote(hyphenated)
 
 class Entry:
-    """Model encapuslating a wordbase entry."""
+    """Model encapuslating a wordbase entry.
+
+    A slug is an ID derivable from the word stored in the entry. The slug is
+    just a url-safe/pretty version of the word. Slugs are case-sensitive (since
+    we might want to distinguish, say, the word "pin" from the acronym "PIN").
+    Clients should not need to know about slugs.
+    """
     def __init__(self, entry_data):
         self.word = entry_data['word']
         self.definition = entry_data['definition']
