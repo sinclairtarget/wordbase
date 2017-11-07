@@ -28,7 +28,7 @@ class DuplicateEntry(ApplicationException):
     def __init__(self, slug):
         message = 'An entry already exists for the given word.'
         ApplicationException.__init__(self, message)
-        self.location = url_for('entry', slug=slug, _external=true)
+        self.location = url_for('entry', slug=slug, _external=True)
 
     def to_dict(self):
         return dict(message=self.message, location=self.location)
