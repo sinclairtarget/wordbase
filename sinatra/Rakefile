@@ -1,6 +1,6 @@
 require 'sqlite3'
 
-require_relative 'db'
+require_relative 'lib/wordbase_backend/db'
 
 namespace :db do
   desc 'Initialize the database using schema.sql'

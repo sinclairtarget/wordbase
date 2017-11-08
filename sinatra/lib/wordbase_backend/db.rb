@@ -1,6 +1,6 @@
 require 'sqlite3'
 
-require_relative 'wordbase_backend'
+require_relative 'app'
 
 module DB
   # Loads schema file into database

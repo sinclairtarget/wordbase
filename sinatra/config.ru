@@ -1,3 +1,3 @@
-require './wordbase_backend'
+require './lib/wordbase_backend'
 
 run App
