@@ -1,0 +1,10 @@
+require 'sqlite3'
+
+require_relative 'db'
+
+namespace :db do
+  desc 'Initialize the database using schema.sql'
+  task :init do
+    DB.init
+  end
+end
