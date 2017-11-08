@@ -10,6 +10,8 @@ module DB
   end
 
   def self.get
-    SQLite3::Database.new(App.settings.database)
+    db = SQLite3::Database.new(App.settings.database)
+    db.results_as_hash = true
+    db
   end
 end
