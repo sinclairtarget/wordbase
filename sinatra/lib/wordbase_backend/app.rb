@@ -4,8 +4,8 @@ require 'sinatra/json'
 require_relative 'db'
 require_relative 'entry'
 
-# App#call creates a new instance (prototype) of App if one doesn't yet exist
-# It then creates a duplicate instance to hand the request to
+# App::call creates a new "prototype" instance of App if one doesn't yet exist
+# Each incoming request is then handled by a new duplicate of the prototype
 class App < Sinatra::Base
   set :database, 'wordbase_backend.db'
   set :schema_file, 'schema.sql'
