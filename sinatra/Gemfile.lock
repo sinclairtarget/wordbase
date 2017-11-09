@@ -10,6 +10,7 @@ GEM
       rack
     rack-test (0.7.0)
       rack (>= 1.0, < 3)
+    rake (12.2.1)
     sinatra (2.0.0)
       mustermann (~> 1.0)
       rack (~> 2.0)
@@ -31,6 +32,7 @@ PLATFORMS
 DEPENDENCIES
   minitest
   rack-test
+  rake
   sinatra
   sinatra-contrib
   sqlite3
