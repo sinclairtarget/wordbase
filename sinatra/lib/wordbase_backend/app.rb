@@ -3,13 +3,14 @@ require 'sinatra/json'
 
 require_relative 'db'
 require_relative 'entry'
-require_relative 'error_handling'
+require_relative 'errors'
+require_relative 'error_responses'
 require_relative 'middleware/unicode_or_bust'
 
 # App::call creates a new "prototype" instance of App if one doesn't yet exist
 # Each incoming request is then handled by a new duplicate of the prototype
 class App < Sinatra::Base
-  include ErrorHandling
+  include ErrorResponses
 
   set :database, 'wordbase_backend.db'
   set :schema_file, 'schema.sql'
@@ -17,6 +18,14 @@ class App < Sinatra::Base
   enable :logging
 
   use UnicodeOrBust
+
+  error JSON::ParserError do
+    halt_with_response BadJSONRequest
+  end
+
+  error ValidationError do |error|
+    halt_with_response BadRequestModel, error.error_messages
+  end
 
   get '/ping' do
     'PONG'
@@ -29,9 +38,28 @@ class App < Sinatra::Base
 
   get '/entries/:slug' do |slug|
     row = db.get_first_row("select * from entries where slug=?", slug)
-    halt_with_response RecordNotFound, slug unless row
+    halt_with_response EntryNotFound, slug unless row
     entry = Entry.new(row)
     json entry.to_hash
+  end
+
+  # Idempotent post. Fails on duplicate entry.
+  post '/entries' do
+    entry_data = JSON.parse(request.body.read)
+    entry = Entry.new(entry_data)
+
+    begin
+      db.execute <<-SQL, entry.slug, entry.word, entry.definition
+        insert into entries (slug, word, definition)
+        values (?, ? ,?)
+      SQL
+    rescue SQLite3::ConstraintException
+      halt_with_response DuplicateEntry, entry
+    end
+
+    location = url(entry.location)
+    headers = { 'Location' => location, 'Content-Location' => location }
+    [201, headers, json(entry.to_hash)]
   end
 
   private

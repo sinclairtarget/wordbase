@@ -7,6 +7,8 @@ require 'tempfile'
 
 require 'wordbase_backend'
 
+require_relative 'core_ext/hash'
+
 class TestWordbaseBackend < Minitest::Test
   include Rack::Test::Methods
 
@@ -44,7 +46,7 @@ class TestWordbaseBackend < Minitest::Test
   def test_can_get_no_entries
     get '/entries'
     assert last_response.ok?
-    assert_equal [], JSON.parse(last_response.body)
+    assert_equal [], parse_json_resp(last_response)
   end
 
   def test_can_get_entries
@@ -54,7 +56,7 @@ class TestWordbaseBackend < Minitest::Test
     get '/entries'
     assert last_response.ok?
 
-    parsed_resp = JSON.parse(last_response.body)
+    parsed_resp = parse_json_resp(last_response)
     assert_equal SEED_ENTRIES.count, parsed_resp.count
   end
 
@@ -68,15 +70,64 @@ class TestWordbaseBackend < Minitest::Test
     get '/entries/Gable'
     assert last_response.ok?
 
-    parsed_resp = JSON.parse(last_response.body)
+    location = "/entries/#{gable_entry[:slug]}"
+
+    parsed_resp = parse_json_resp(last_response)
     assert_instance_of Hash, parsed_resp
     assert_equal gable_entry[:word], parsed_resp['word']
     assert_equal gable_entry[:definition], parsed_resp['definition']
+    assert_equal location, parsed_resp['location']
   end
 
   def test_nonexistent_entry_returns_404
     get '/entries/Gable'
     assert last_response.not_found?
+  end
+
+# =============================================================================
+# POST /entries
+# =============================================================================
+  def test_can_post_valid_entry
+    valid_entry = SEED_ENTRIES.first
+    post_json '/entries', valid_entry.except(:slug)
+
+    assert last_response.created?
+
+    location = "/entries/#{valid_entry[:slug]}"
+    assert last_response.headers['Location'] = location
+    assert last_response.headers['Content-Location'] = location
+
+    parsed_resp = parse_json_resp(last_response)
+    assert_instance_of Hash, parsed_resp
+    assert_equal valid_entry[:word], parsed_resp['word']
+    assert_equal valid_entry[:definition], parsed_resp['definition']
+    assert_equal location, parsed_resp['location']
+  end
+
+  def test_post_form_encoded_returns_400
+    valid_entry = SEED_ENTRIES.first.except(:slug)
+    post '/entries', valid_entry
+    assert last_response.bad_request?
+  end
+
+  def test_post_invalid_json_returns_400
+    post '/entries', '{,}', 'CONTENT_TYPE' => 'application/json'
+    assert last_response.bad_request?
+  end
+
+  def test_post_with_missing_fields_returns_400
+    [:word, :definition].each do |field|
+      invalid_entry = SEED_ENTRIES.first.except(:slug, field)
+      post_json '/entries', invalid_entry
+      assert last_response.bad_request?, last_response.status
+    end
+  end
+
+  def test_post_duplicate_returns_409
+    valid_entry = SEED_ENTRIES.first
+    insert_entry(DB.get, valid_entry)
+    post_json '/entries', valid_entry.except(:slug)
+    assert_equal 409, last_response.status
   end
 
   private
@@ -86,5 +137,15 @@ class TestWordbaseBackend < Minitest::Test
       insert into entries (slug, word, definition)
       values (?, ? ,?)
     SQL
+  end
+
+  def parse_json_resp(resp)
+    assert_equal 'application/json', resp.headers['Content-Type']
+    JSON.parse(resp.body)
+  end
+
+  def post_json(path, json_hash, **env)
+    env = env.merge('CONTENT_TYPE' => 'application/json')
+    post path, json_hash.to_json, env
   end
 end
