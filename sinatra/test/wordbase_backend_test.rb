@@ -61,7 +61,7 @@ class TestWordbaseBackend < Minitest::Test
   end
 
 # =============================================================================
-# GET /entries/<slug>
+# GET /entries/:slug
 # =============================================================================
   def test_can_get_entry
     gable_entry = SEED_ENTRIES.first
@@ -80,7 +80,7 @@ class TestWordbaseBackend < Minitest::Test
   end
 
   def test_nonexistent_entry_returns_404
-    get '/entries/Gable'
+    get '/entries/Foo'
     assert last_response.not_found?
   end
 
@@ -128,6 +128,28 @@ class TestWordbaseBackend < Minitest::Test
     insert_entry(DB.get, valid_entry)
     post_json '/entries', valid_entry.except(:slug)
     assert_equal 409, last_response.status
+  end
+
+# =============================================================================
+# DELETE /entries/:slug
+# =============================================================================
+  def test_valid_delete_returns_204
+    db = DB.get
+
+    valid_entry = SEED_ENTRIES.first
+    insert_entry(db, valid_entry)
+
+    assert_equal 1, db.execute('select * from entries').count
+
+    delete "/entries/#{valid_entry[:slug]}"
+    assert last_response.no_content?
+
+    assert_equal 0, db.execute('select * from entries').count
+  end
+
+  def test_deleting_nonexistent_returns_404
+    delete "/entries/Foo"
+    assert last_response.not_found?
   end
 
   private

@@ -37,9 +37,7 @@ class App < Sinatra::Base
   end
 
   get '/entries/:slug' do |slug|
-    row = db.get_first_row("select * from entries where slug=?", slug)
-    halt_with_response EntryNotFound, slug unless row
-    entry = Entry.new(row)
+    entry = get_entry(slug)
     json entry.to_hash
   end
 
@@ -62,6 +60,12 @@ class App < Sinatra::Base
     [201, headers, json(entry.to_hash)]
   end
 
+  delete '/entries/:slug' do |slug|
+    entry = get_entry(slug)
+    db.execute("delete from entries where slug=?", slug)
+    204
+  end
+
   private
 
   # Sinatra does some CRAZY magic to make instance methods callable from the
@@ -69,5 +73,11 @@ class App < Sinatra::Base
 
   def db
     @db ||= DB.get
+  end
+
+  def get_entry(slug)
+    row = db.get_first_row("select * from entries where slug=?", slug)
+    halt_with_response EntryNotFound, slug unless row
+    Entry.new(row)
   end
 end
