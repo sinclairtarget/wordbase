@@ -41,6 +41,15 @@ class App < Sinatra::Base
     json entry.to_hash
   end
 
+  put '/entries/:slug' do |slug|
+    entry_data = JSON.parse(request.body.read)
+    entry = get_entry(slug)
+    entry.definition = entry_data['definition'] || entry.definition
+    db.execute("update entries set definition=? where slug=?",
+               entry.definition, entry.slug)
+    json entry.to_hash
+  end
+
   # Idempotent post. Fails on duplicate entry.
   post '/entries' do
     entry_data = JSON.parse(request.body.read)

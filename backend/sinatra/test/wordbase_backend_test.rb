@@ -131,6 +131,48 @@ class TestWordbaseBackend < Minitest::Test
   end
 
 # =============================================================================
+# PUT /entries/:slug
+# =============================================================================
+  def test_can_update_entry_without_header
+    db = DB.get
+    valid_entry = SEED_ENTRIES.first
+    insert_entry(db, valid_entry)
+
+    slug = valid_entry[:slug]
+    put_data = { definition: 'A newer definition.' }
+    location = "/entries/#{slug}"
+    put_json location, put_data
+
+    assert last_response.ok?
+    parsed_resp = parse_json_resp(last_response)
+    assert_instance_of Hash, parsed_resp
+    assert_equal valid_entry[:word], parsed_resp['word']
+    assert_equal put_data[:definition], parsed_resp['definition']
+    assert_equal location, parsed_resp['location']
+
+    db_entry = db.get_first_row("select * from entries where slug=?", slug)
+    assert_equal valid_entry[:word], db_entry['word']
+    assert_equal put_data[:definition], db_entry['definition']
+  end
+
+  def test_put_nonexistent_entry_returns_404
+    put_json '/entries/Foo', { defintion: 'A newer definition.' }
+    assert last_response.not_found?
+  end
+
+  def test_post_form_encoded_returns_400
+    valid_entry = SEED_ENTRIES.first
+    slug = valid_entry[:slug]
+    put "/entries/:slug", valid_entry.except(:slug)
+    assert last_response.bad_request?
+  end
+
+  def test_post_invalid_json_returns_400
+    put '/entries/:slug', '{,}', 'CONTENT_TYPE' => 'application/json'
+    assert last_response.bad_request?
+  end
+
+# =============================================================================
 # DELETE /entries/:slug
 # =============================================================================
   def test_valid_delete_returns_204
@@ -167,7 +209,20 @@ class TestWordbaseBackend < Minitest::Test
   end
 
   def post_json(path, json_hash, **env)
+    send_json(path, json_hash, 'POST', **env)
+  end
+
+  def put_json(path, json_hash, **env)
+    send_json(path, json_hash, 'PUT', **env)
+  end
+
+  def send_json(path, json_hash, method, **env)
     env = env.merge('CONTENT_TYPE' => 'application/json')
-    post path, json_hash.to_json, env
+
+    if method == 'POST'
+      post path, json_hash.to_json, env
+    elsif method == 'PUT'
+      put path, json_hash.to_json, env
+    end
   end
 end
