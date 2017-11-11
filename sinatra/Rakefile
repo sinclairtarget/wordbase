@@ -2,6 +2,11 @@ require 'sqlite3'
 
 require_relative 'lib/wordbase_backend/db'
 
+desc 'Run tests.'
+task :test do
+  ruby '-I lib test/*_test.rb'
+end
+
 namespace :db do
   desc 'Initialize the database using schema.sql'
   task :init do
