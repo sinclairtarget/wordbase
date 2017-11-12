@@ -3,7 +3,8 @@ create table entries(
     id integer primary key autoincrement,
     slug text not null,
     word text not null,
-    definition text not null
+    definition text not null,
+    updatedAt text
 );
 
 drop index if exists entries_slug_idx;

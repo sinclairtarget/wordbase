@@ -1,3 +1,4 @@
+require 'time'
 require 'sinatra/base'
 require 'sinatra/json'
 
@@ -44,9 +45,16 @@ class App < Sinatra::Base
   put '/entries/:slug' do |slug|
     entry_data = JSON.parse(request.body.read)
     entry = get_entry(slug)
+
+    header = request.env['HTTP_IF_UNMODIFIED_SINCE']
+    check_if_unmodified_since(entry, header)
+
     entry.definition = entry_data['definition'] || entry.definition
-    db.execute("update entries set definition=? where slug=?",
-               entry.definition, entry.slug)
+    db.execute <<-SQL, entry.definition, entry.slug
+      update entries set definition=?, updatedAt=datetime('now') where slug=?
+    SQL
+
+    entry = get_entry(slug) # To get updatedAt
     json entry.to_hash
   end
 
@@ -88,5 +96,14 @@ class App < Sinatra::Base
     row = db.get_first_row("select * from entries where slug=?", slug)
     halt_with_response EntryNotFound, slug unless row
     Entry.new(row)
+  end
+
+  def check_if_unmodified_since(entry, header)
+    return if header.nil? || header.empty?
+    return if entry.updated_at.nil? || entry.updated_at.empty?
+
+    header_datetime = Time.httpdate(header)
+    entry_datetime = Time.parse(entry.updated_at + ' UTC')
+    halt 412 if entry_datetime > header_datetime
   end
 end

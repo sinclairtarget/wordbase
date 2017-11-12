@@ -12,6 +12,8 @@ require_relative 'core_ext/hash'
 class TestWordbaseBackend < Minitest::Test
   include Rack::Test::Methods
 
+  IF_UNMODIFIED_SINCE = 'HTTP_IF_UNMODIFIED_SINCE'.freeze
+
   SEED_ENTRIES = [
     { slug: 'Gable', word: 'Gable', definition: 'Part of a roof.' },
     { slug: 'Dour', word: 'Dour', definition: 'Serious or morose.' }
@@ -153,6 +155,55 @@ class TestWordbaseBackend < Minitest::Test
     db_entry = db.get_first_row("select * from entries where slug=?", slug)
     assert_equal valid_entry[:word], db_entry['word']
     assert_equal put_data[:definition], db_entry['definition']
+    assert db_entry['updatedAt']
+    assert_equal db_entry['updatedAt'], parsed_resp['updated_at']
+  end
+
+  def test_can_update_entry_with_header
+    db = DB.get
+    valid_entry = SEED_ENTRIES.first
+    insert_entry(db, valid_entry)
+
+    slug = valid_entry[:slug]
+    put_data = { definition: 'A newer definition.' }
+    location = "/entries/#{slug}"
+
+    put_json location, put_data
+    assert last_response.ok?
+
+    datetime = (Time.now + 60).httpdate
+    put_json location, put_data, { IF_UNMODIFIED_SINCE => datetime }
+
+    assert last_response.ok?
+    parsed_resp = parse_json_resp(last_response)
+    assert_instance_of Hash, parsed_resp
+    assert_equal valid_entry[:word], parsed_resp['word']
+    assert_equal put_data[:definition], parsed_resp['definition']
+    assert_equal location, parsed_resp['location']
+
+    db_entry = db.get_first_row("select * from entries where slug=?", slug)
+    assert_equal valid_entry[:word], db_entry['word']
+    assert_equal put_data[:definition], db_entry['definition']
+    assert db_entry['updatedAt']
+    assert_equal db_entry['updatedAt'], parsed_resp['updated_at']
+  end
+
+  def test_cannot_update_with_conflict
+    db = DB.get
+    valid_entry = SEED_ENTRIES.first
+    insert_entry(db, valid_entry)
+
+    slug = valid_entry[:slug]
+    put_data = { definition: 'A newer definition.' }
+    location = "/entries/#{slug}"
+
+    put_json location, put_data
+    assert last_response.ok?
+    parsed_resp = parse_json_resp(last_response)
+
+    earlier_datetime = (Time.now - 60).httpdate
+    put_json location, put_data, { IF_UNMODIFIED_SINCE => earlier_datetime }
+    assert_equal 412, last_response.status
   end
 
   def test_put_nonexistent_entry_returns_404
@@ -208,15 +259,15 @@ class TestWordbaseBackend < Minitest::Test
     JSON.parse(resp.body)
   end
 
-  def post_json(path, json_hash, **env)
-    send_json(path, json_hash, 'POST', **env)
+  def post_json(path, json_hash, env={})
+    send_json(path, json_hash, 'POST', env)
   end
 
-  def put_json(path, json_hash, **env)
-    send_json(path, json_hash, 'PUT', **env)
+  def put_json(path, json_hash, env={})
+    send_json(path, json_hash, 'PUT', env)
   end
 
-  def send_json(path, json_hash, method, **env)
+  def send_json(path, json_hash, method, env)
     env = env.merge('CONTENT_TYPE' => 'application/json')
 
     if method == 'POST'

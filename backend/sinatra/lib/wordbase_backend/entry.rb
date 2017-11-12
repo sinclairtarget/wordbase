@@ -2,7 +2,7 @@ require 'cgi'
 require_relative 'errors'
 
 class Entry
-  attr_accessor :slug, :word, :definition
+  attr_accessor :slug, :word, :definition, :updated_at
 
   ERR_WORD = 'Entry must have a word'.freeze
   ERR_DEFINTION = 'Entry must have a definition'.freeze
@@ -13,6 +13,7 @@ class Entry
     validate!
 
     @slug = entry_hash['slug'] || self.class.make_slug(@word)
+    @updated_at = entry_hash['updatedAt']
   end
 
   def validate!
@@ -26,7 +27,8 @@ class Entry
     {
       word: word,
       definition: definition,
-      location: location
+      location: location,
+      updated_at: updated_at
     }
   end
 
