@@ -1,0 +1,49 @@
+:host {
+    background-color: #6279b8;
+    overflow: hidden;
+    display: flex;
+    flex-flow: column;
+}
+
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 12px 0;
+    overflow-y: scroll;
+    flex: 1;
+}
+
+li {
+    margin: 0 12px 12px 12px;
+    padding: 0.84em 12px;
+    background-color: white;
+    border-radius: 6px;
+    border-bottom: 1px solid #606060;
+    border-right: 1px solid #606060;
+    cursor: pointer;
+}
+
+li:hover {
+    background-color: #d0e3f6;
+}
+
+.sidebar-control {
+    padding: 12px;
+    background-color: #515e8c;
+}
+
+button {
+    color: #fff;
+    background-color: #4ea976;
+    padding: 8px;
+    border: none;
+    float: right;
+    cursor: pointer;
+    border-radius: 6px;
+    border-bottom: 1px solid #606060;
+    border-right: 1px solid #606060;
+}
+
+button:hover {
+    background-color: #57bd84;
+}

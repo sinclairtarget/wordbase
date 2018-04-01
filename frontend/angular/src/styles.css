@@ -1,1 +1,44 @@
 /* You can add global styles to this file, and also import other style files */
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 62.5%;
+    height: 100%;
+}
+
+body {
+    font-size: 1.4rem;
+    font-family: MS Trebuchet, sans-serif;
+    height: 100%;
+    color: #404040;
+    background-color: #8ea4d2;
+}
+
+h1, h2, h3, h4 {
+    margin: 0;
+    font-family: MS Trebuchet, sans-serif;
+}
+
+h1 {
+    font-size: 2.4rem;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+h3 {
+    font-size: 1.6rem;
+}
+
+h4 {
+    font-size: 1.4rem;
+}
