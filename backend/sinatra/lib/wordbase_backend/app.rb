@@ -18,6 +18,10 @@ class App < Sinatra::Base
 
   enable :logging
 
+  configure :development do
+    set :show_exceptions, :after_handler
+  end
+
   use UnicodeOrBust
 
   error JSON::ParserError do
