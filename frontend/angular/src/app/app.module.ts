@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { EntryService } from './entry.service';
 
 
 @NgModule({
@@ -14,7 +15,7 @@ import { SidebarComponent } from './sidebar/sidebar.component';
   imports: [
     BrowserModule
   ],
-  providers: [],
+  providers: [EntryService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

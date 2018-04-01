@@ -1,16 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Entry } from './entry';
+import { EntryService } from './entry.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
-  entries: Entry[] = [
-    { word: 'Gregarious', definition: 'Very Sociable.' },
-    { word: 'Newel', definition: 'The bottom post of a stair.' }
-  ]
-
+export class AppComponent implements OnInit {
+  entries: Entry[];
   title = 'app';
+
+  constructor(private entryService: EntryService) { }
+
+  ngOnInit(): void {
+    this.getEntries();
+  }
+
+  getEntries(): void {
+    this.entryService
+        .getEntries()
+        .subscribe(entries => this.entries = entries);
+  }
 }
