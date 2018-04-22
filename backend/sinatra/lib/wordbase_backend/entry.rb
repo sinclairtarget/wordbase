@@ -33,7 +33,7 @@ class Entry
   end
 
   def location
-    '/entries/' + slug # hmm, would be nicer to generate this somehow
+    '/api/entries/' + slug # hmm, would be nicer to generate this somehow
   end
 
   def self.make_slug(word)

@@ -36,17 +36,17 @@ class App < Sinatra::Base
     'PONG'
   end
 
-  get '/entries' do
+  get '/api/entries' do
     entries = db.execute('select * from entries').map { |row| Entry.new(row) }
     json entries.map(&:to_hash)
   end
 
-  get '/entries/:slug' do |slug|
+  get '/api/entries/:slug' do |slug|
     entry = get_entry(slug)
     json entry.to_hash
   end
 
-  put '/entries/:slug' do |slug|
+  put '/api/entries/:slug' do |slug|
     entry_data = JSON.parse(request.body.read)
     entry = get_entry(slug)
 
@@ -63,7 +63,7 @@ class App < Sinatra::Base
   end
 
   # Idempotent post. Fails on duplicate entry.
-  post '/entries' do
+  post '/api/entries' do
     entry_data = JSON.parse(request.body.read)
     entry = Entry.new(entry_data)
 
@@ -81,7 +81,7 @@ class App < Sinatra::Base
     [201, headers, json(entry.to_hash)]
   end
 
-  delete '/entries/:slug' do |slug|
+  delete '/api/entries/:slug' do |slug|
     entry = get_entry(slug)
     db.execute("delete from entries where slug=?", slug)
     204

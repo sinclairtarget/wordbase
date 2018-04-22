@@ -46,7 +46,7 @@ class TestWordbaseBackend < Minitest::Test
 # GET /entries
 # =============================================================================
   def test_can_get_no_entries
-    get '/entries'
+    get '/api/entries'
     assert last_response.ok?
     assert_equal [], parse_json_resp(last_response)
   end
@@ -55,7 +55,7 @@ class TestWordbaseBackend < Minitest::Test
     db = DB.get
     SEED_ENTRIES.each { |entry| insert_entry(DB.get, entry) }
 
-    get '/entries'
+    get '/api/entries'
     assert last_response.ok?
 
     parsed_resp = parse_json_resp(last_response)
@@ -69,10 +69,10 @@ class TestWordbaseBackend < Minitest::Test
     gable_entry = SEED_ENTRIES.first
     insert_entry(DB.get, gable_entry)
 
-    get '/entries/Gable'
+    get '/api/entries/Gable'
     assert last_response.ok?
 
-    location = "/entries/#{gable_entry[:slug]}"
+    location = "/api/entries/#{gable_entry[:slug]}"
 
     parsed_resp = parse_json_resp(last_response)
     assert_instance_of Hash, parsed_resp
@@ -82,7 +82,7 @@ class TestWordbaseBackend < Minitest::Test
   end
 
   def test_nonexistent_entry_returns_404
-    get '/entries/Foo'
+    get '/api/entries/Foo'
     assert last_response.not_found?
   end
 
@@ -91,11 +91,11 @@ class TestWordbaseBackend < Minitest::Test
 # =============================================================================
   def test_can_post_valid_entry
     valid_entry = SEED_ENTRIES.first
-    post_json '/entries', valid_entry.except(:slug)
+    post_json '/api/entries', valid_entry.except(:slug)
 
     assert last_response.created?
 
-    location = "/entries/#{valid_entry[:slug]}"
+    location = "/api/entries/#{valid_entry[:slug]}"
     assert last_response.headers['Location'] = location
     assert last_response.headers['Content-Location'] = location
 
@@ -108,19 +108,19 @@ class TestWordbaseBackend < Minitest::Test
 
   def test_post_form_encoded_returns_400
     valid_entry = SEED_ENTRIES.first.except(:slug)
-    post '/entries', valid_entry
+    post '/api/entries', valid_entry
     assert last_response.bad_request?
   end
 
   def test_post_invalid_json_returns_400
-    post '/entries', '{,}', 'CONTENT_TYPE' => 'application/json'
+    post '/api/entries', '{,}', 'CONTENT_TYPE' => 'application/json'
     assert last_response.bad_request?
   end
 
   def test_post_with_missing_fields_returns_400
     [:word, :definition].each do |field|
       invalid_entry = SEED_ENTRIES.first.except(:slug, field)
-      post_json '/entries', invalid_entry
+      post_json '/api/entries', invalid_entry
       assert last_response.bad_request?, last_response.status
     end
   end
@@ -128,7 +128,7 @@ class TestWordbaseBackend < Minitest::Test
   def test_post_duplicate_returns_409
     valid_entry = SEED_ENTRIES.first
     insert_entry(DB.get, valid_entry)
-    post_json '/entries', valid_entry.except(:slug)
+    post_json '/api/entries', valid_entry.except(:slug)
     assert_equal 409, last_response.status
   end
 
@@ -142,7 +142,7 @@ class TestWordbaseBackend < Minitest::Test
 
     slug = valid_entry[:slug]
     put_data = { definition: 'A newer definition.' }
-    location = "/entries/#{slug}"
+    location = "/api/entries/#{slug}"
     put_json location, put_data
 
     assert last_response.ok?
@@ -166,7 +166,7 @@ class TestWordbaseBackend < Minitest::Test
 
     slug = valid_entry[:slug]
     put_data = { definition: 'A newer definition.' }
-    location = "/entries/#{slug}"
+    location = "/api/entries/#{slug}"
 
     put_json location, put_data
     assert last_response.ok?
@@ -195,7 +195,7 @@ class TestWordbaseBackend < Minitest::Test
 
     slug = valid_entry[:slug]
     put_data = { definition: 'A newer definition.' }
-    location = "/entries/#{slug}"
+    location = "/api/entries/#{slug}"
 
     put_json location, put_data
     assert last_response.ok?
@@ -207,19 +207,19 @@ class TestWordbaseBackend < Minitest::Test
   end
 
   def test_put_nonexistent_entry_returns_404
-    put_json '/entries/Foo', { defintion: 'A newer definition.' }
+    put_json '/api/entries/Foo', { defintion: 'A newer definition.' }
     assert last_response.not_found?
   end
 
   def test_post_form_encoded_returns_400
     valid_entry = SEED_ENTRIES.first
     slug = valid_entry[:slug]
-    put "/entries/:slug", valid_entry.except(:slug)
+    put "/api/entries/:slug", valid_entry.except(:slug)
     assert last_response.bad_request?
   end
 
   def test_post_invalid_json_returns_400
-    put '/entries/:slug', '{,}', 'CONTENT_TYPE' => 'application/json'
+    put '/api/entries/:slug', '{,}', 'CONTENT_TYPE' => 'application/json'
     assert last_response.bad_request?
   end
 
@@ -234,14 +234,14 @@ class TestWordbaseBackend < Minitest::Test
 
     assert_equal 1, db.execute('select * from entries').count
 
-    delete "/entries/#{valid_entry[:slug]}"
+    delete "/api/entries/#{valid_entry[:slug]}"
     assert last_response.no_content?
 
     assert_equal 0, db.execute('select * from entries').count
   end
 
   def test_deleting_nonexistent_returns_404
-    delete "/entries/Foo"
+    delete "/api/entries/Foo"
     assert last_response.not_found?
   end
 
