@@ -1,27 +1,28 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/observable';
-import { of } from 'rxjs/observable/of';
-import { catchError } from 'rxjs/operators';
+import { tap, catchError } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 import { Entry } from './entry';
 
+const ENTRIES_URL: string = '/api/entries';
+
 @Injectable()
 export class EntryService {
-
-  entriesUrl = 'http://localhost:5000/entries';
 
   constructor(private http: HttpClient) { }
 
   getEntries(): Observable<Entry[]> {
-    return this.http.get<Entry[]>(this.entriesUrl)
-      .pipe(
-        catchError(this.handleError)
-      );
+    return this.http
+               .get<Entry[]>(ENTRIES_URL)
+               .pipe(
+                 tap(entries => console.log('Got entries:', entries)),
+                 catchError(this.handleError)
+               );
   }
 
   private handleError(error: HttpErrorResponse) {
-    console.error('Error fetching entries.');
+    console.error('Error fetching entries.', error);
     return [];
   }
 }
