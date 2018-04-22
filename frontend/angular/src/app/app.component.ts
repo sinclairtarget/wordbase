@@ -9,7 +9,7 @@ import { EntryService } from './entry.service';
 })
 export class AppComponent implements OnInit {
   entries: Entry[];
-  title = 'app';
+  selectedEntry: Entry = null;
 
   constructor(private entryService: EntryService) { }
 
