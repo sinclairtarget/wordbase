@@ -1,0 +1,12 @@
+:host {
+    position: relative;
+}
+
+.prompt {
+    position: relative;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #6980b1;
+}

@@ -1,30 +1,26 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
 import { RouterModule, Routes } from '@angular/router';
+import { EntriesModule } from './entries/entries.module'
 
 import { AppComponent } from './app.component';
-import { SidebarComponent } from './sidebar/sidebar.component';
-import { EntryComponent } from './entry/entry.component';
-import { EntryService } from './entry.service';
+import { EntriesComponent } from './entries/entries.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/entries', pathMatch: 'full' },
-  { path: 'entries', component: AppComponent }
+  { path: 'entries', component: EntriesComponent }
 ];
 
 @NgModule({
   declarations: [
-    AppComponent,
-    SidebarComponent,
-    EntryComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
-    HttpClientModule,
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes),
+    EntriesModule
   ],
-  providers: [EntryService],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

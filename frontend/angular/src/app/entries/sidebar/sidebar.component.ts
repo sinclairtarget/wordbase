@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Entry } from '../entry';
+import { Entry } from '../entry.model';
 
 @Component({
-  selector: 'app-sidebar',
+  selector: 'sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css']
 })

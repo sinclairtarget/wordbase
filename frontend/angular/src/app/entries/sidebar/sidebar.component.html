@@ -1,8 +1,4 @@
-<ul>
-  <li *ngFor="let entry of entries">
-    {{entry.word}}
-  </li>
-</ul>
+<entry-list [entries]="entries"></entry-list>
 <div class="sidebar-control">
   <button>
     <h4><i class="fa fa-plus"></i> Add New</h4>

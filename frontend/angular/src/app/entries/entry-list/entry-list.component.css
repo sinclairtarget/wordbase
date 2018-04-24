@@ -1,0 +1,25 @@
+:host {
+    flex: 1;
+}
+
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 12px 0;
+    overflow-y: scroll;
+    flex: 1;
+}
+
+li {
+    margin: 0 12px 12px 12px;
+    padding: 0.84em 12px;
+    background-color: white;
+    border-radius: 6px;
+    border-bottom: 1px solid #606060;
+    border-right: 1px solid #606060;
+    cursor: pointer;
+}
+
+li:hover {
+    background-color: #d0e3f6;
+}

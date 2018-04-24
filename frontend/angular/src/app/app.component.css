@@ -12,14 +12,4 @@ header {
 
 main {
     flex: 1;
-    display: flex;
-    overflow: hidden;
-}
-
-app-sidebar {
-    width: 260px;
-}
-
-div.content {
-    flex: 1;
 }

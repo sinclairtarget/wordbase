@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/observable';
 import { tap, catchError } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
-import { Entry } from './entry';
+import { Entry } from './entry.model';
 
 const ENTRIES_URL: string = '/api/entries';
 
