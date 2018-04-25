@@ -5,24 +5,7 @@
     flex-flow: column;
 }
 
-
-.sidebar-control {
+.control-group {
     padding: 12px;
     background-color: #515e8c;
-}
-
-button {
-    color: #fff;
-    background-color: #4ea976;
-    padding: 8px;
-    border: none;
-    float: right;
-    cursor: pointer;
-    border-radius: 6px;
-    border-bottom: 1px solid #606060;
-    border-right: 1px solid #606060;
-}
-
-button:hover {
-    background-color: #57bd84;
 }

@@ -1,5 +1,5 @@
 <ul>
-  <li *ngFor="let entry of entries">
+  <li *ngFor="let entry of entries" (click)="clicked(entry)">
     {{ entry.word }}
   </li>
 </ul>

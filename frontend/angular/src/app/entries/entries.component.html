@@ -1,4 +1,5 @@
-<sidebar [entries]="entries"></sidebar>
+<sidebar [entries]="entries" (onEntrySelected)="onEntrySelected($event)">
+</sidebar>
 <div class="content">
   <entry [entry]="selectedEntry"></entry>
 </div>

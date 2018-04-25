@@ -1,4 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter
+} from '@angular/core';
+
 import { Entry } from '../entry.model';
 
 @Component({
@@ -6,10 +12,15 @@ import { Entry } from '../entry.model';
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css']
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent {
   @Input() entries: Entry[];
+  @Output() onEntrySelected: EventEmitter<Entry>;
 
-  constructor() { }
+  constructor() {
+    this.onEntrySelected = new EventEmitter();
+  }
 
-  ngOnInit() { }
+  onEntryClicked(entry: Entry): void {
+    this.onEntrySelected.emit(entry);
+  }
 }

@@ -1,5 +1,6 @@
-<entry-list [entries]="entries"></entry-list>
-<div class="sidebar-control">
+<entry-list [entries]="entries" (onEntryClicked)="onEntryClicked($event)">
+</entry-list>
+<div class="control-group">
   <button>
     <h4><i class="fa fa-plus"></i> Add New</h4>
   </button>

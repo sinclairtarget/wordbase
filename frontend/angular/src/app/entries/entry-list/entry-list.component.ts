@@ -1,4 +1,10 @@
-import { Component, Input } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter
+} from '@angular/core';
+
 import { Entry } from '../entry.model';
 
 @Component({
@@ -8,6 +14,14 @@ import { Entry } from '../entry.model';
 })
 export class EntryListComponent {
   @Input() entries: Entry[];
+  @Output() onEntryClicked: EventEmitter<Entry>;
 
-  constructor() { }
+  constructor() {
+    this.onEntryClicked = new EventEmitter();
+  }
+
+  clicked(entry: Entry): boolean {
+    this.onEntryClicked.emit(entry);
+    return false;
+  }
 }

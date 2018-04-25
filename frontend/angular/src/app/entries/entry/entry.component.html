@@ -1,3 +1,15 @@
 <h1 class="prompt" *ngIf="entry === null">
   Nothing here. Select an entry!
 </h1>
+<div class="entry-box" *ngIf="entry != null">
+  <h1>{{ entry.word }}</h1>
+  <p>{{ entry.definition }}</p>
+  <div class="control-group">
+    <button class="danger">
+      <h4><i class="fa fa-trash"></i> Delete</h4>
+    </button>
+    <button>
+      <h4><i class="fa fa-pencil"></i> Edit</h4>
+    </button>
+  </div>
+</div>

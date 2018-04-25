@@ -23,4 +23,8 @@ export class EntriesComponent implements OnInit {
         .getEntries()
         .subscribe(entries => this.entries = entries);
   }
+
+  onEntrySelected(entry: Entry): void {
+    this.selectedEntry = entry;
+  }
 }

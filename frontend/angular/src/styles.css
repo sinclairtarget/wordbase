@@ -42,3 +42,29 @@ h3 {
 h4 {
     font-size: 1.4rem;
 }
+
+button {
+    color: #fff;
+    background-color: #4ea976;
+    padding: 12px 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+button:hover {
+    background-color: #57bd84;
+}
+
+button.danger {
+    background-color: #8d3030;
+}
+
+.control-group {
+    overflow: hidden;
+}
+
+.control-group button {
+    float: right;
+    margin-left: 14px;
+}
