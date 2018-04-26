@@ -4,7 +4,7 @@ have learned.
 
 Using Wordbase, users should be able to:
 * Create "entries" consisting of a word and definition
-* Edit the definition of these entries
+* Edit each entry's definition
 * Delete an entry
 
 ## Backend Implementations
