@@ -1,9 +1,14 @@
 import {
   Component,
   Input,
-  OnChanges
+  OnChanges,
+  SimpleChanges
 } from '@angular/core';
+
+import { Observable } from 'rxjs/observable';
+
 import { Entry } from '../entry.model';
+import { EntryService } from '../entry.service';
 
 @Component({
   selector: 'entry',
@@ -13,9 +18,16 @@ import { Entry } from '../entry.model';
 export class EntryComponent implements OnChanges {
   @Input() entry: Entry;
 
-  constructor() { }
+  // This entry, fetched directly from the API, could hypothetically contain
+  // more information then the one received via @Input.
+  entry$: Observable<Entry>;
 
-  ngOnChanges() {
-    console.log("Entry changed!");
+  constructor(
+    private entryService: EntryService
+  ) { }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.hasOwnProperty('entry') && this.entry != null)
+      this.entry$ = this.entryService.getEntry(this.entry.location);
   }
 }

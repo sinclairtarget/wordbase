@@ -41,7 +41,6 @@ export class EntriesComponent implements OnInit {
 
   private handleRouteChange([params: ParamMap, entries: Entry[]]) {
     let slug = params.get('slug');
-    console.log(this);
     if (slug != null)
       this.updateSelectedEntry(slug, this.entries);
   }

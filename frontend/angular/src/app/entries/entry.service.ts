@@ -14,22 +14,33 @@ export class EntryService {
 
   getEntries(): Observable<Entry[]> {
     return this.http
-               .get<Entry[]>(ENTRIES_URL)
-               .pipe(
-                 map(entries =>
-                   entries.map(e => new Entry(e.word, e.definition))
-                 ),
-                 tap(entries => console.log('Got entries:', entries)),
-                 catchError(this.handleError)
-                 share() // this is some next-level shit
-               );
+      .get<Entry[]>(ENTRIES_URL)
+      .pipe(
+        map(entries => entries.map(e => new Entry(e))),
+        tap(entries => console.log('Got entries:', entries)),
+        catchError(this.handleEntriesError)
+        share() // this is some next-level shit
+      );
   }
 
   getEntry(location: string): Observable<Entry> {
+    return this.http
+      .get<Entry>(location)
+      .pipe(
+        map(e => new Entry(e))
+        tap(entry => console.log('Got entry: ', entry))
+        catchError(this.handleEntryError)
+        share()
+      );
   }
 
-  private handleError(error: HttpErrorResponse) {
+  private handleEntriesError(error: HttpErrorResponse) {
     console.error('Error fetching entries.', error);
     return [];
+  }
+
+  private handleEntryError(error: HttpErrorResponse) {
+    console.error('Error fetching entry: ', error);
+    return null;
   }
 }

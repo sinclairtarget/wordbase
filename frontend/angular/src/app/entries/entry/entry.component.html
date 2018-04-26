@@ -3,7 +3,7 @@
 </h1>
 <div class="entry-box" *ngIf="entry != null">
   <h1>{{ entry.word }}</h1>
-  <p>{{ entry.definition }}</p>
+  <p>{{ (entry$ | async)?.definition }}</p>
   <div class="control-group">
     <button class="danger">
       <h4><i class="fa fa-trash"></i> Delete</h4>
