@@ -25,6 +25,9 @@ export class EntryService {
                );
   }
 
+  getEntry(location: string): Observable<Entry> {
+  }
+
   private handleError(error: HttpErrorResponse) {
     console.error('Error fetching entries.', error);
     return [];

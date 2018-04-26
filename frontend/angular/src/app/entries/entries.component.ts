@@ -14,8 +14,9 @@ import { EntryService } from './entry.service';
 })
 export class EntriesComponent implements OnInit {
   entries: Entry[];
-  entries$: Observable<Entry[]>;
   selectedEntry: Entry = null;
+
+  private entries$: Observable<Entry[]>;
 
   constructor(
     private entryService: EntryService,
@@ -34,20 +35,18 @@ export class EntriesComponent implements OnInit {
     });
 
     this.route.paramMap
-      .pipe(
-        combineLatest(this.entries$)
-      )
-      .subscribe(([params: ParamMap, entries: Entry[]]) => {
-        let slug = params.get('slug');
-        console.log("Got slug: ", slug);
-
-        if (slug != null) {
-          this.updateSelectedEntry(slug, this.entries);
-        }
-      });
+      .pipe(combineLatest(this.entries$))
+      .subscribe(this.handleRouteChange.bind(this)); // fucking javascript
   }
 
-  updateSelectedEntry(slug: string, entries: Entry[]): void {
+  private handleRouteChange([params: ParamMap, entries: Entry[]]) {
+    let slug = params.get('slug');
+    console.log(this);
+    if (slug != null)
+      this.updateSelectedEntry(slug, this.entries);
+  }
+
+  private updateSelectedEntry(slug: string, entries: Entry[]): void {
     this.selectedEntry = entries.find(e => e.slug == slug);
   }
 }

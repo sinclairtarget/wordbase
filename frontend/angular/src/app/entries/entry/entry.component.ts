@@ -1,4 +1,8 @@
-import { Component, Input } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges
+} from '@angular/core';
 import { Entry } from '../entry.model';
 
 @Component({
@@ -6,8 +10,12 @@ import { Entry } from '../entry.model';
   templateUrl: './entry.component.html',
   styleUrls: ['./entry.component.css']
 })
-export class EntryComponent {
+export class EntryComponent implements OnChanges {
   @Input() entry: Entry;
 
   constructor() { }
+
+  ngOnChanges() {
+    console.log("Entry changed!");
+  }
 }
