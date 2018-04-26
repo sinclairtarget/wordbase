@@ -1,4 +1,10 @@
 export class Entry {
-  word: string;
-  definition: string;
+  constructor(
+    public word: string,
+    public definition: string
+  ) { }
+
+  get slug(): string {
+    return this.word.toLowerCase().replace(' ', '-')
+  }
 }

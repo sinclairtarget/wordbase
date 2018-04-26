@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
+import { RouterModule } from '@angular/router';
 
 import { EntryService } from './entry.service';
 import { EntriesComponent } from './entries.component';
@@ -17,7 +18,8 @@ import { EntryComponent } from './entry/entry.component';
   ],
   imports: [
     BrowserModule,
-    HttpClientModule
+    HttpClientModule,
+    RouterModule
   ],
   exports: [
     EntriesComponent

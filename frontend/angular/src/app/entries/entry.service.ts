@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/observable';
-import { tap, catchError } from 'rxjs/operators';
+import { map, tap, catchError, share } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 import { Entry } from './entry.model';
@@ -16,8 +16,12 @@ export class EntryService {
     return this.http
                .get<Entry[]>(ENTRIES_URL)
                .pipe(
+                 map(entries =>
+                   entries.map(e => new Entry(e.word, e.definition))
+                 ),
                  tap(entries => console.log('Got entries:', entries)),
                  catchError(this.handleError)
+                 share() // this is some next-level shit
                );
   }
 

@@ -8,7 +8,8 @@ import { EntriesComponent } from './entries/entries.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/entries', pathMatch: 'full' },
-  { path: 'entries', component: EntriesComponent }
+  { path: 'entries', component: EntriesComponent },
+  { path: 'entries/:slug', component: EntriesComponent }
 ];
 
 @NgModule({
