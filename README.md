@@ -13,3 +13,5 @@ Using Wordbase, users should be able to:
 
 ## Frontend Implementations
 * [Angular](/frontend/angular)
+
+![](wordbase.png)
