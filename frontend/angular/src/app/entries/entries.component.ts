@@ -36,16 +36,16 @@ export class EntriesComponent implements OnInit {
 
     this.route.paramMap
       .pipe(combineLatest(this.entries$))
-      .subscribe(this.handleRouteChange.bind(this)); // fucking javascript
+      .subscribe(this.handleRouteChange);
   }
 
-  private handleRouteChange([params: ParamMap, entries: Entry[]]) {
+  private handleRouteChange = ([params, entries]: [ParamMap, Entry[]]) => {
     let slug = params.get('slug');
     if (slug != null)
       this.updateSelectedEntry(slug, this.entries);
   }
 
-  private updateSelectedEntry(slug: string, entries: Entry[]): void {
+  private updateSelectedEntry(slug: string, entries: Entry[]) {
     this.selectedEntry = entries.find(e => e.slug == slug);
   }
 }
