@@ -1,5 +1,5 @@
 <ul>
-  <li *ngFor="let entry of entries">
+  <li *ngFor="let entry of entries$ | async">
     <a routerLink="/entries/{{ entry.slug }}"
        routerLinkActive="active">
       {{ entry.word }}

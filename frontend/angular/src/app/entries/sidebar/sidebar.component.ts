@@ -1,9 +1,4 @@
-import {
-  Component,
-  Input
-} from '@angular/core';
-
-import { Entry } from '../entry.model';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'sidebar',
@@ -11,5 +6,4 @@ import { Entry } from '../entry.model';
   styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent {
-  @Input() entries: Entry[];
 }

@@ -19,8 +19,7 @@ export class EntryService {
       .pipe(
         map(entries => entries.map(e => new Entry(e))),
         tap(entries => console.log('Got entries:', entries)),
-        catchError(this.handleEntriesError),
-        share() // this is some next-level shit
+        catchError(this.handleEntriesError)
       );
   }
 
