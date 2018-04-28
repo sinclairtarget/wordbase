@@ -1,13 +1,24 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
 import { EntryService } from './entry.service';
 import { EntriesComponent } from './entries.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { EntryListComponent } from './entry-list/entry-list.component';
 import { EntryComponent } from './entry/entry.component';
+
+const routes: Routes = [
+  {
+    path: 'entries',
+    component: EntriesComponent,
+    children: [
+      { path: ':slug', component: EntryComponent },
+      { path: '', component: EntryComponent }
+    ]
+  }
+];
 
 @NgModule({
   declarations: [
@@ -19,7 +30,7 @@ import { EntryComponent } from './entry/entry.component';
   imports: [
     BrowserModule,
     HttpClientModule,
-    RouterModule
+    RouterModule.forChild(routes)
   ],
   exports: [
     EntriesComponent

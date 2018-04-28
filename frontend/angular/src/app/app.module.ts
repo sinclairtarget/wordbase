@@ -8,8 +8,7 @@ import { EntriesComponent } from './entries/entries.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/entries', pathMatch: 'full' },
-  { path: 'entries', component: EntriesComponent },
-  { path: 'entries/:slug', component: EntriesComponent }
+  { path: 'entries', component: EntriesComponent }
 ];
 
 @NgModule({
@@ -18,8 +17,8 @@ const routes: Routes = [
   ],
   imports: [
     BrowserModule,
-    RouterModule.forRoot(routes),
-    EntriesModule
+    EntriesModule,
+    RouterModule.forRoot(routes)
   ],
   providers: [],
   bootstrap: [AppComponent]
