@@ -1,8 +1,6 @@
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter
+  Input
 } from '@angular/core';
 
 import { Entry } from '../entry.model';
@@ -14,13 +12,4 @@ import { Entry } from '../entry.model';
 })
 export class SidebarComponent {
   @Input() entries: Entry[];
-  @Output() onEntrySelected: EventEmitter<Entry>;
-
-  constructor() {
-    this.onEntrySelected = new EventEmitter();
-  }
-
-  onEntryClicked(entry: Entry): void {
-    this.onEntrySelected.emit(entry);
-  }
 }
