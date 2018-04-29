@@ -1,8 +1,8 @@
-<h1 class="prompt" *ngIf="entry === null">
+<h1 class="prompt" *ngIf="entry$ === null">
   Nothing here. Select an entry!
 </h1>
-<div class="entry-box" *ngIf="entry != null">
-  <h1>{{ entry.word }}</h1>
+<div class="entry-box" *ngIf="entry$ != null">
+  <h1>{{ (entry$ | async)?.word }}</h1>
   <p>{{ (entry$ | async)?.definition }}</p>
   <div class="control-group">
     <button class="danger">

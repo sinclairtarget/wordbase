@@ -1,6 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/observable';
-import { map, tap, catchError, share } from 'rxjs/operators';
+
+import {
+  map,
+  catchError,
+  switchMap,
+  share,
+  filter
+} from 'rxjs/operators';
+
 import { of } from 'rxjs/observable/of';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
@@ -10,7 +18,6 @@ const ENTRIES_URL: string = '/api/entries';
 
 @Injectable()
 export class EntryService {
-
   constructor(private http: HttpClient) { }
 
   getEntries(): Observable<Entry[]> {
@@ -18,20 +25,37 @@ export class EntryService {
       .get<Entry[]>(ENTRIES_URL)
       .pipe(
         map(entries => entries.map(e => new Entry(e))),
-        tap(entries => console.log('Got entries:', entries)),
-        catchError(this.handleEntriesError)
+        catchError(this.handleEntriesError),
+        share()
       );
   }
 
-  getEntry(location: string): Observable<Entry> {
+  getEntry(slug: string): Observable<Entry> {
+    // Get entries, find right entry, then request latest data for that entry.
+    let entries$ = this.getEntries();
+    return entries$.pipe(
+      map(entries => this.findEntry(slug, entries)),
+      filter(entry => entry != null),
+      switchMap(this._getEntry),
+      share()
+    );
+  }
+
+  private _getEntry = (entry: Entry): Observable<Entry> => {
     return this.http
-      .get<Entry>(location)
+      .get<Entry>(entry.location)
       .pipe(
-        map(e => new Entry(e)),
-        tap(entry => console.log('Got entry: ', entry)),
-        catchError(this.handleEntryError),
-        share()
+        map(e => new Entry(e)), // So we can call methods
+        catchError(this.handleEntryError)
       );
+  };
+
+  private findEntry(slug: string, entries: Entry[]): Entry {
+    let entry = entries.find(e => e.slug == slug);
+    if (entry == null)
+      console.error(`Entry with slug "${slug}" not found.`);
+
+    return entry;
   }
 
   private handleEntriesError = (error: HttpErrorResponse) => {
