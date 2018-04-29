@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/observable';
+import { ConnectableObservable } from 'rxjs/observable/connectableobservable';
 
 import {
   map,
   catchError,
   switchMap,
-  share,
-  filter
+  publishLast,
+  filter,
+  share
 } from 'rxjs/operators';
 
 import { of } from 'rxjs/observable/of';
@@ -18,27 +20,53 @@ const ENTRIES_URL: string = '/api/entries';
 
 @Injectable()
 export class EntryService {
+  // We only want to make this call once.
+  private entries$: ConnectableObservable<Entry[]> = null;
+
   constructor(private http: HttpClient) { }
 
   getEntries(): Observable<Entry[]> {
+    if (this.entries$ === null) {
+      this.entries$ = this._getEntries();
+      // Fire the http request.
+      // Author of RXJS says this is an anti-pattern, calling connect() should
+      // be the caller's responsibility. But not sure how that would work
+      // since we are trying to cache the result here.
+      //
+      // Maybe each caller would have to call connect itself? But that seems
+      // strange. Connect() would be called multiple times.
+      this.entries$.connect();
+    }
+
+    return this.entries$;
+  }
+
+  getEntry(slug: string): Observable<Entry> {
+    // Get entries, find right entry, then request latest data for that entry.
+    return this.getEntries().pipe(
+      map(entries => this.findEntry(slug, entries)),
+      filter(entry => entry != null),
+      switchMap(this._getEntry),
+      // Similar to "publishLast()" in that the stream becomes multicast. But
+      // instead of becoming a ConnectableObservable, the observable
+      // automatically gets connected any time the subscriber count goes from 0
+      // to 1.
+      share()
+    );
+  }
+
+  private _getEntries(): ConnectableObservable<Entry[]> {
     return this.http
       .get<Entry[]>(ENTRIES_URL)
       .pipe(
         map(entries => entries.map(e => new Entry(e))),
         catchError(this.handleEntriesError),
-        share()
-      );
-  }
-
-  getEntry(slug: string): Observable<Entry> {
-    // Get entries, find right entry, then request latest data for that entry.
-    let entries$ = this.getEntries();
-    return entries$.pipe(
-      map(entries => this.findEntry(slug, entries)),
-      filter(entry => entry != null),
-      switchMap(this._getEntry),
-      share()
-    );
+        // "publish", so that the stream is multicast.
+        // "last", so that subscribers get the last emitted value, even after
+        // the stream completes.
+        // Must call "connect()" to begin stream.
+        publishLast()
+      ) as ConnectableObservable<Entry[]>; // :(
   }
 
   private _getEntry = (entry: Entry): Observable<Entry> => {
