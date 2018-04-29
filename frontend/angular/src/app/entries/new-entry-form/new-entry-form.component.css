@@ -1,0 +1,19 @@
+input {
+    display: block;
+    margin: 20px 0;
+    border: none;
+    border-bottom: 2px dotted #404040;
+}
+
+textarea {
+    margin-bottom: 20px;
+    width: 100%;
+    min-width: 100%;
+    min-height: 100px;
+    padding: 12px;
+}
+
+#word {
+    font-size: 2.4rem;
+    font-weight: bold;
+}
