@@ -12,11 +12,20 @@ import {
 } from 'rxjs/operators';
 
 import { of } from 'rxjs/observable/of';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders
+} from '@angular/common/http';
 
 import { Entry } from './entry.model';
 
 const ENTRIES_URL: string = '/api/entries';
+const HTTP_OPTIONS = {
+  headers: new HttpHeaders({
+    'Content-Type': 'application/json'
+  })
+};
 
 @Injectable()
 export class EntryService {
@@ -53,6 +62,18 @@ export class EntryService {
       // to 1.
       share()
     );
+  }
+
+  addEntry(entry: Entry): Observable<Entry> {
+    return this.http.post<Entry>(ENTRIES_URL, entry, HTTP_OPTIONS)
+      .pipe(
+        map(e => new Entry(e)),
+        catchError(this.handleAddError)
+      );
+  }
+
+  clear() {
+    this.entries$ = null;
   }
 
   private _getEntries(): ConnectableObservable<Entry[]> {
@@ -93,6 +114,11 @@ export class EntryService {
 
   private handleEntryError = (error: HttpErrorResponse) => {
     console.error('Error fetching entry: ', error);
+    return of(null);
+  }
+
+  private handleAddError = (error: HttpErrorResponse) => {
+    console.error('Error POST-ing entry: ', error);
     return of(null);
   }
 }

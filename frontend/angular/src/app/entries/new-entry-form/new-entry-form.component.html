@@ -1,15 +1,17 @@
 <div class="entry-box">
-  <form>
-    <input id="word" type="text" placeholder="New Word" required />
-    <textarea id="definition" placeholder="Define your word..."
-              required></textarea>
-  </form>
+  <form (ngSubmit)="onSubmit()" #entryForm="ngForm">
+    <input id="word" name="word" type="text" placeholder="New Word"
+           [(ngModel)]="entry.word" required />
+    <textarea id="definition" name="defintion"
+              placeholder="Define your word..." required
+              [(ngModel)]="entry.definition"></textarea>
   <div class="control-group">
     <a routerLink="/entries" class="btn secondary">
       <h4><i class="fa fa-times"></i> Cancel</h4>
     </a>
-    <button type="submit">
+    <button type="submit" [disabled]="!entryForm.form.valid">
       <h4>Save</h4>
     </button>
   </div>
+  </form>
 </div>

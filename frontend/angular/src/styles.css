@@ -75,6 +75,10 @@ button.secondary:hover, .btn.secondary:hover {
     background-color: #9b9b9b;
 }
 
+button:disabled {
+    background-color: #7c9989;
+}
+
 .control-group {
     overflow: hidden;
 }
